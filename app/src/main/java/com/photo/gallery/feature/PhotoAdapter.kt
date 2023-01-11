@@ -10,8 +10,12 @@ import com.photo.gallery.data.model.DiffUtilsPhotoUIModel
 import com.photo.gallery.data.model.PhotoUIModel
 import com.simple.news.databinding.AdapterPhotoGridBinding
 import com.simple.news.databinding.AdapterPhotoListBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 
-class PhotoAdapter: PagingDataAdapter<PhotoUIModel, PhotoAdapter.CustomViewHolder>(DiffUtilsPhotoUIModel()) {
+class PhotoAdapter(
+    private val likeAction: (PhotoUIModel) -> Unit,
+    private val checkLike: (String, Int) -> Unit): PagingDataAdapter<PhotoUIModel, PhotoAdapter.CustomViewHolder>(DiffUtilsPhotoUIModel()) {
 
     private var isListStyle = true
 
@@ -22,7 +26,8 @@ class PhotoAdapter: PagingDataAdapter<PhotoUIModel, PhotoAdapter.CustomViewHolde
     inner class ListViewHolder(private val binding: AdapterPhotoListBinding): CustomViewHolder(binding.root){
 
         override fun bind(data: PhotoUIModel) = with(binding){
-            photoCard.setData(data)
+            photoCard.setData(data, likeAction)
+            checkLike(data.id, bindingAdapterPosition)
         }
     }
 
@@ -65,6 +70,15 @@ class PhotoAdapter: PagingDataAdapter<PhotoUIModel, PhotoAdapter.CustomViewHolde
 
     fun setPhotoStyle(isListStyle: Boolean){
         this.isListStyle = isListStyle
+    }
+
+    fun setLike(data: PhotoUIModel){
+        data.position?.let { position ->
+            getItem(position)?.let { photo ->
+                photo.isLiked = data.isLiked
+                notifyItemChanged(position)
+            }
+        }
     }
 
 }

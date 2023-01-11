@@ -11,5 +11,6 @@ fun PhotoResponseModel.toPhotoUIModel() =
         description = description ?: alt_description ?: "",
         thumbnailUrl = urls?.thumb ?: "",
         smallUrl = urls?.small ?: "",
-        username = user?.name ?: ""
+        username = user?.name ?: "",
+        isLiked = false
     )

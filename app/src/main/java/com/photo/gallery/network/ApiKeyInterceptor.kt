@@ -11,7 +11,7 @@ class ApiKeyInterceptor @Inject constructor(): Interceptor {
         val authenticatedRequest = request.newBuilder()
             .addHeader(
                 "Authorization",
-                "Client-ID 2aSJDTUSy2pgP7bR2Sfm9ES0g0yOz-rXyoGays-OPOI"
+                "Bearer fCrhylAXN5cGGMpGzgPr3VzruVV9UcHxL8S1I6dOFxA"
             )
             .build()
         return chain.proceed(authenticatedRequest)

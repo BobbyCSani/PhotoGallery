@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.photo.gallery.data.model.PhotoUIModel
 import com.photo.gallery.utility.FooterLoadingAdapter
 import com.simple.news.databinding.FragmentPhotoBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,7 +60,7 @@ class PhotoFragment: Fragment() {
 
     private fun setupAdapter() {
         activity?.let { act ->
-            photoAdapter = PhotoAdapter().apply {
+            photoAdapter = PhotoAdapter(::likeAction, ::checkLike).apply {
                 withLoadStateHeaderAndFooter(FooterLoadingAdapter(), FooterLoadingAdapter())
             }
 
@@ -68,6 +69,14 @@ class PhotoFragment: Fragment() {
                 adapter = photoAdapter
             }
         }
+    }
+
+    private fun likeAction(data: PhotoUIModel){
+        viewModel.setBookmark(data)
+    }
+
+    private fun checkLike(photoId: String, position: Int){
+        viewModel.getPhotoFromLocal(photoId, position)
     }
 
     private fun setupRecipeObserver() {
@@ -89,6 +98,12 @@ class PhotoFragment: Fragment() {
                         GridLayoutManager(act, 3, GridLayoutManager.VERTICAL, false)
                     adapter = photoAdapter
                 }
+            }
+        }
+
+        viewModel.favoriteLiveData.observe(viewLifecycleOwner){ data ->
+            binding?.rvPhoto?.post {
+                photoAdapter.setLike(data)
             }
         }
     }
